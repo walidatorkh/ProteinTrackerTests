@@ -9,6 +9,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 import com.simpleprogrammer.proteintracker.TrackingService;
+import com.simpleprogrammer.proteintracker.InvalidGoalExeption;
 
 @RunWith(Parameterized.class)
 public class ParameterizedTests {
@@ -42,6 +43,7 @@ public class ParameterizedTests {
 		else
 			service.removeProtein(-input);
 		assertEquals(expected, service.getTotal());
+		System.out.println(expected);
 	}
 	
 	

@@ -1,12 +1,19 @@
+import static org.hamcrest.CoreMatchers.allOf;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.matchers.JUnitMatchers.*;
+import static org.junit.matchers.JUnitMatchers.containsString;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.rules.ExpectedException;
+import org.junit.rules.Timeout;
 
 import com.simpleprogrammer.proteintracker.InvalidGoalExeption;
 import com.simpleprogrammer.proteintracker.TrackingService;
@@ -46,25 +53,68 @@ public class TrackingServiceTests {
 	public void NewTrackingServiceTotalisZero1() {
 		TrackingService service = new TrackingService();
 		
-		assertEquals("tracking service total was not zero", 1, service.getTotal());
+		assertEquals("tracking service total was not zero", 0, service.getTotal());
 	}
+//	@Test
+//	//@Ignore
+//	@Category(GoodTestsCategory.class)
+//	public void WhenAddingProteinTotalIncreasesByThatAmount(){
+//		service.addProtein(10);
+//		//assertEquals("Protein amount was not correct", 10, service.getTotal());
+//		//assertThat(service.getTotal(), is(10));
+//		assertThat(service.getTotal(), allof(is(10), instanceOf(Integer.class)));
+//
+//	}
+	
 	@Test
-	public void WhenAddingProteinTotalIncreasesByThatAmount(){
+	@Category({GoodTestsCategory.class, BadCategory.class})
+	public void whenAddingProteinTotalIncreasesByThatAmount() {
+
 		service.addProtein(10);
-		assertEquals("Protein amount was not correct", 10, service.getTotal());
+		assertEquals("Protein amount was not correct",10, service.getTotal());
+		assertThat(service.getTotal(), is(10));
+		
+		assertThat(service.getTotal(), allOf(is(10), instanceOf(Integer.class)));
+
 	}
+
+
 	@Test
 	public void WhenRemovingProteinTotalRemainsZero(){
 		service.removeProtein(10);
 		assertEquals(0, service.getTotal());
 	}
-	@Test(expected = InvalidGoalExeption.class)
-	public void WhenGoalIsSetToLessThanZeroExeptionIsThrown() throws InvalidGoalExeption {
+	
+//	@Rule
+//	public ExpectedException thrown = ExpectedException.none();
+//	
+//	@Test  //(expected = InvalidGoalExeption.class)
+//	public void WhenGoalIsSetToLessThanZeroExeptionIsThrown() throws InvalidGoalExeption {
+//		thrown.expect(InvalidGoalExeption.class);
+//		thrown.expectMessage("Goal was less that zero!");
+//		service.setGoal(-5);
+//	}
+	
+	@Rule
+	public ExpectedException thrown = ExpectedException.none();
+	
+	@SuppressWarnings("deprecation")
+	@Test
+	public void whenGoalIsSetToLessThanZeroExceptionisThrown() throws InvalidGoalExeption{
+		thrown.expect(InvalidGoalExeption.class);
+		//thrown.expectMessage("Goal was less than zero!");
+		thrown.expectMessage(containsString("Goal"));
 		service.setGoal(-5);
 	}
-	@Test(timeout = 200)
+	
+	@SuppressWarnings("deprecation")
+	@Rule
+	//@Ignore
+	public Timeout timeout = new Timeout(20);
+	@Test
+	//@Test(timeout = 200)
 	public void BadTest() {
-		for (int i =0; i < 10000000;   i++)
+		for (int i =0; i < 1000000;   i++)
 			service.addProtein(1);
 	}
 
